@@ -2,19 +2,17 @@ import os
 import pandas as pd
 from generate_pdf import markdown_to_pdf
 
-def generar_todas_las_planillas(df_enrutado: pd.DataFrame, df_reservas: pd.DataFrame, output_dir_pdf: str = "planillas", output_dir_md: str = "planillas_temp", generar_pdfs: bool = True):
+def generar_todas_las_planillas(df_enrutado: pd.DataFrame, df_reservas: pd.DataFrame, base_dir: str = "Parejas", dir_md: str = "planillas_temp", generar_pdfs: bool = True):
     """
     Genera las 33 planillas en formato Markdown y PDF para cada pareja.
     
     Parámetros:
     - df_enrutado: DataFrame que contiene las direcciones principales (10 por pareja) ya ordenadas.
     - df_reservas: DataFrame que contiene las direcciones de reserva (3 por clúster).
-    - output_dir_pdf: Carpeta donde se guardarán los archivos PDF generados.
-    - output_dir_md: Carpeta donde se guardarán los archivos Markdown temporales.
+    - base_dir: Carpeta base donde se crearán las subcarpetas por cada pareja para los PDFs.
+    - dir_md: Carpeta donde se guardarán los archivos Markdown temporales.
     """
-    os.makedirs(output_dir_md, exist_ok=True)
-    if generar_pdfs:
-        os.makedirs(output_dir_pdf, exist_ok=True)
+    os.makedirs(dir_md, exist_ok=True)
     
     # Obtenemos los ID únicos de todas las parejas
     parejas = df_enrutado['ID_Pareja'].unique()
@@ -67,14 +65,19 @@ def generar_todas_las_planillas(df_enrutado: pd.DataFrame, df_reservas: pd.DataF
             direccion = row['Descripcion_Original']
             lineas_md.append(f'| **Folio {folio}**: {direccion} <br><br> | ( ✓ ) &nbsp;&nbsp;&nbsp;&nbsp; ( X ) | |')
             
+        # Creamos la carpeta específica para esta pareja (solo para los PDF finales)
+        carpeta_pareja = os.path.join(base_dir, str(id_pareja))
+        if generar_pdfs:
+            os.makedirs(carpeta_pareja, exist_ok=True)
+        
         # Guardamos el archivo Markdown
-        nombre_archivo_md = os.path.join(output_dir_md, f'planilla_pareja_{id_pareja}.md')
+        nombre_archivo_md = os.path.join(dir_md, f'planilla_pareja_{id_pareja}.md')
         with open(nombre_archivo_md, 'w', encoding='utf-8') as f:
             f.write('\n'.join(lineas_md))
             
         # Opcional: convertir a PDF
         if generar_pdfs:
-            nombre_archivo_pdf = os.path.join(output_dir_pdf, f'planilla_pareja_{id_pareja}.pdf')
+            nombre_archivo_pdf = os.path.join(carpeta_pareja, f'planilla_pareja_{id_pareja}.pdf')
             markdown_to_pdf(nombre_archivo_md, nombre_archivo_pdf)
             
-    print(f"✅ Se han generado {len(parejas)} planillas PDF en '{output_dir_pdf}' (archivos MD en '{output_dir_md}').")
+    print(f"✅ Se han generado {len(parejas)} planillas. PDFs guardados en '{base_dir}/<ID_Pareja>/' y MDs en '{dir_md}/'.")
