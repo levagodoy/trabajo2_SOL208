@@ -23,7 +23,7 @@ def generar_todas_las_planillas(df_enrutado: pd.DataFrame, df_reservas: pd.DataF
         
         # Extraemos la información general (Nombres y Cluster) usando la primera fila
         primera_fila = df_pareja.iloc[0]
-        nombres = primera_fila['Nombre_Completo']
+        nombres = primera_fila['Nombres_Completos']
         cluster_id = primera_fila['Cluster']
         
         # Filtramos las direcciones de reserva asociadas al clúster de esta pareja

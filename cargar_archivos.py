@@ -87,7 +87,7 @@ def guardar_kmz(df: pd.DataFrame):
         # LA DESCRIPCIÓN AHORA TIENE LOS NOMBRES REALES DE LOS ALUMNOS
         descripcion_rica = (
             f"<b>Dirección:</b> {fila['Descripcion_Original']}<br><br>"
-            f"<b>Equipo Asignado:</b> {fila['Nombre_Completo']}<br>"
+            f"<b>Equipo Asignado:</b> {fila['Nombres_Completos']}<br>"
             f"<b>Grupo Original:</b> {fila['Grupo']}<br>"
             f"<b>Pareja N°:</b> {fila['ID_Pareja']}<br>"
             f"<b>Zona de Trabajo:</b> {cluster_id + 1}<br>"
